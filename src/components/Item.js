@@ -60,7 +60,8 @@ export default function Item({item, updateQty}) {
     }
 
     function onQtyChange() {
-        updateQty(item, countRef.current.value);
+        dispatch(updateQuantity(item, countRef.current.value));
+        dispatch(updatePrice());
     }
 
     return (
