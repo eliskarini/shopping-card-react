@@ -4,7 +4,12 @@ import { MdDelete } from 'react-icons/md';
 import { FaHeart } from 'react-icons/fa';
 import swal from 'sweetalert';
 
-export default function Item({item, removeItem, updateQty}) {
+import { removeItem, updateQuantity, updatePrice} from '../actions';
+import { useDispatch } from 'react-redux';
+
+export default function Item({item, updateQty}) {
+    const dispatch = useDispatch();
+
     let count = item.qty || 1;
     const countRef = useRef();
 
@@ -14,13 +19,15 @@ export default function Item({item, removeItem, updateQty}) {
         }
         count = count - 1;
         countRef.current.value = count;
-        updateQty(item, count);
+        dispatch(updateQuantity(item, count));
+        dispatch(updatePrice());
     }
 
     function incrementCount() {
         count = count + 1;
         countRef.current.value = count;
-        updateQty(item, count);
+        dispatch(updateQuantity(item, count));
+        dispatch(updatePrice());
     }
 
     function remove() {
@@ -36,7 +43,8 @@ export default function Item({item, removeItem, updateQty}) {
                     icon: "success",
                 })
                 .then(() => {
-                    removeItem(item.id)
+                    dispatch(removeItem(item));
+                    dispatch(updatePrice());
                 })
             } else {
                 return;
@@ -58,10 +66,10 @@ export default function Item({item, removeItem, updateQty}) {
     return (
         <>
         <Row className="py-3 border-bottom">
-            <Col xs={6} md={3}>
+            <Col xs={12} md={3}>
                 <Card.Img src={item.image}/>
             </Col>
-            <Col xs={6} md={6} className="d-flex flex-column">
+            <Col xs={12} md={6} className="d-flex flex-column">
                 <Card.Title>{item.name}</Card.Title>
                 <div className="my-auto">
                     <div>{item.type}</div>
@@ -73,13 +81,13 @@ export default function Item({item, removeItem, updateQty}) {
                     <button onClick={moveToWishlist} className="btn bg-transparent pl-0"><FaHeart size='18px'/> Move To Wishlist</button>
                 </div>
             </Col>
-            <Col xs={6} md={3} className="text-right d-flex flex-column">
+            <Col xs={12} md={3} className="text-right d-flex flex-md-column">
                 <div>
                     <button className="bg-transparent border" onClick={decrementCount}>-</button>
                     <input ref={countRef} className="border text-center" style={{width: "50px"}} defaultValue={count} onChange={onQtyChange} />
                     <button className="bg-transparent border" onClick={incrementCount}>+</button>
                 </div>
-                <div className="mt-auto">
+                <div className="mt-auto ml-auto">
                     <strong>${item.price}</strong>
                 </div>
             </Col>
